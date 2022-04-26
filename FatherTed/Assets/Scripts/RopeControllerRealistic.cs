@@ -67,7 +67,7 @@ public class RopeControllerRealistic : MonoBehaviour
         whatIsHangingFromTheRope.position = allRopeSections[0].pos;
 
         //Make what's hanging from the rope look at the next to last rope position to make it rotate with the rope
-        whatIsHangingFromTheRope.LookAt(allRopeSections[1].pos);
+        //whatIsHangingFromTheRope.LookAt(allRopeSections[1].pos);
     }
 
     void FixedUpdate()
@@ -147,7 +147,6 @@ public class RopeControllerRealistic : MonoBehaviour
         nextPosVelForwardEuler.Add(allRopeSections[allRopeSections.Count - 1]);
 
 
-        //
         //Calculate the next pos with Heun's method (Improved Euler)
         //
         //Calculate acceleration in each rope section which is what is needed to get the next pos and vel
