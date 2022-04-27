@@ -36,6 +36,7 @@ public class Claw : MonoBehaviour
     {
         if (move)
         {
+            Debug.Log("FUck");
             Chase();
         }
         else if (retrieve)
