@@ -28,7 +28,10 @@ public class pickuper : MonoBehaviour
         {
             grab = false;
         }
-
+        if (col.name == "Player")
+        {
+            retrac = true;
+        }
     }
 
 
