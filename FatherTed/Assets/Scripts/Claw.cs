@@ -14,12 +14,19 @@ public class Claw : MonoBehaviour
     public NavMeshAgent navAgent;
     public GameObject currentlyTouching;
 
+    public float winchSpeed;
+
     public bool move = false;
     public bool retrieve = false;
     public bool retract = false;
     public bool travel = false;
     public bool drop = false;
 
+
+    public float Timer = 0.0f;
+    public float time = 5; //wait time
+    private bool has;
+    public bool grab;
 
 
     // Start is called before the first frame update
@@ -29,17 +36,25 @@ public class Claw : MonoBehaviour
         player = GameObject.Find("Player").transform;
         dropArea = GameObject.Find("Chute").transform;
         navAgent = clawRoot.GetComponent<NavMeshAgent>(); //where's the navmesh?
+
+        Chase();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        retrieve = GameObject.Find("PickupRad").GetComponent<pickupdetect>().close; //check if player is crouching rn
+        grab = GameObject.Find("Pickuper").GetComponent<pickuper>().grab; //check if player is crouching rn
+        retract = GameObject.Find("Pickuper").GetComponent<pickuper>().retrac; //check if player is crouching rn
+
+        Timers();
+
         if (move)
         {
-            Debug.Log("FUck");
             Chase();
+            move = false;
         }
-        else if (retrieve)
+        if (retrieve)
         {
             Retrieve();
         }
@@ -60,14 +75,14 @@ public class Claw : MonoBehaviour
     public void Chase()
     {
         navAgent.SetDestination(player.position); //goto wp
-
+        Debug.Log("Chasing");
     }
 
     public void Retrieve()
     {
         if (navAgent.baseOffset >= -4)
         {
-            navAgent.baseOffset -= 0.5f;
+            navAgent.baseOffset -= winchSpeed;
 
         }
     }
@@ -76,7 +91,7 @@ public class Claw : MonoBehaviour
     {
         if (navAgent.baseOffset <= 0)
         {
-            navAgent.baseOffset += 0.5f;
+            navAgent.baseOffset += winchSpeed;
         }
     }
 
@@ -87,18 +102,37 @@ public class Claw : MonoBehaviour
 
     public void Drop()
     {
+
         player.parent = null;
+    }
+
+    void Timers()
+    {
+        Timer += Time.deltaTime;
+
+        if (Timer > time)
+        {
+            Timer = Timer - time;
+            has = true;
+            move = true;
+            Debug.Log("Timer");
+
+        }
     }
 
     private void OnTriggerEnter(Collider col)
     {
         Debug.Log("Collidin");
 
-        if (col.tag == "Targetable")
+        if (col.tag == "Targetable" && grab)
         {
-            Debug.Log("Colliding with targetable");
+            Debug.Log("Colliding with col.name");
             col.transform.parent = this.transform;
+            currentlyTouching = col.gameObject;
+
+
         }
+
     }
 
 }
