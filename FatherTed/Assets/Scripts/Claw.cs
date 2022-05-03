@@ -7,6 +7,8 @@ public class Claw : MonoBehaviour
 {
     [SerializeField] public SphereCollider[] myColliders;
 
+    List<Transform> AllTargets = new List<Transform>();
+
 
     public Transform clawRoot; //what's to be moved in order to move claw
     public Transform dropArea;
@@ -31,6 +33,8 @@ public class Claw : MonoBehaviour
     private bool has;
     public bool grab;
 
+    public string naym;
+
 
     // Start is called before the first frame update
     void Start()
@@ -46,9 +50,20 @@ public class Claw : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        naym = GameObject.Find("Respawner").GetComponent<chute>().name;
 
-        retrieve = GameObject.Find("PickupRad").GetComponent<pickupdetect>().close; //check if player is crouching rn
-        grab = GameObject.Find("Pickuper").GetComponent<pickuper>().grab; //check if player is crouching rn
+        for (int i = 0; i < AllTargets.Count; i++)
+        {
+
+            if (AllTargets[i].name.Contains(naym))
+            {
+                Debug.Log("equal");
+                return;
+            }
+        }
+
+        retrieve = GameObject.Find("PickupRad").GetComponent<pickupdetect>().close;
+        grab = GameObject.Find("Pickuper").GetComponent<pickuper>().grab;
         //retract = GameObject.Find("Pickuper").GetComponent<pickuper>().retrac; //check if player is crouching rn
 
         Timers();
@@ -116,14 +131,22 @@ public class Claw : MonoBehaviour
 
         dropping = true;
 
-        //foreach (SphereCollider bc in myColliders) bc.enabled = false;
-        player.parent = null;
+        //player.parent = null;
+        //player.GetComponent<Rigidbody>().isKinematic = false;
 
-        player.GetComponent<Rigidbody>().isKinematic = false;
-        //currentlyTouching.GetComponent<Rigidbody>().isKinematic = false; //swap currentlytouching to a list and use foreach
+        currentlyTouching.transform.parent = null;
+        currentlyTouching.GetComponent<Rigidbody>().isKinematic = false; //swap currentlytouching to a list and use foreach
 
         //currentlyTouching.GetComponent<Rigidbody>().useGravity = true;
         //currentlyTouching.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
+    }
+
+    public void ChangeTarget()
+    {
+        int index;
+        index = Random.Range(0, AllTargets.Count);
+        currentChaseTarget = AllTargets[index];
+        Debug.Log("Changing Target to " + AllTargets[index]);
     }
 
     void Timers()
@@ -159,6 +182,7 @@ public class Claw : MonoBehaviour
 
             currentlyTouching = col.gameObject;
 
+            if()
 
             Debug.Log("retract on");
             retract = true;
