@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Claw : MonoBehaviour
 {
+    [SerializeField] public SphereCollider[] myColliders;
+
 
     public Transform clawRoot; //what's to be moved in order to move claw
     public Transform dropArea;
@@ -21,6 +23,7 @@ public class Claw : MonoBehaviour
     public bool retract = false;
     public bool travel = false;
     public bool drop = false;
+    public bool dropping;
 
 
     public float Timer = 0.0f;
@@ -108,11 +111,19 @@ public class Claw : MonoBehaviour
     }
 
     public void Drop()
-    { 
-        //currentlyTouching.parent = null;
-        currentlyTouching.GetComponent<Rigidbody>().isKinematic = false;
-        currentlyTouching.GetComponent<Rigidbody>().useGravity = true;
-        currentlyTouching.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
+    {
+        Debug.Log("DROP");
+
+        dropping = true;
+
+        //foreach (SphereCollider bc in myColliders) bc.enabled = false;
+        player.parent = null;
+
+        player.GetComponent<Rigidbody>().isKinematic = false;
+        //currentlyTouching.GetComponent<Rigidbody>().isKinematic = false; //swap currentlytouching to a list and use foreach
+
+        //currentlyTouching.GetComponent<Rigidbody>().useGravity = true;
+        //currentlyTouching.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
     }
 
     void Timers()
@@ -124,26 +135,49 @@ public class Claw : MonoBehaviour
             Timer = Timer - time;
             has = true;
             move = true;
+            retract = false;
             Debug.Log("Timer");
+
+            if (dropping)
+            {
+                dropping = false;
+                //foreach (SphereCollider bc in myColliders) bc.enabled = true;
+
+            }
         }
     }
 
     private void OnTriggerEnter(Collider col)
     {
-        Debug.Log("Collidin");
 
-        if (col.tag == "Targetable" && grab)
+        if (col.tag == "Targetable" && grab && !dropping)
         {
-            Debug.Log("Colliding with "+  col.name);
+            Debug.Log("Colliding with " + col.name);
             col.transform.parent = this.transform;
             col.gameObject.GetComponent<Rigidbody>().isKinematic = true;
-            col.gameObject.GetComponent<Rigidbody>().useGravity = false;
+            //col.gameObject.GetComponent<Rigidbody>().useGravity = false;
 
             currentlyTouching = col.gameObject;
 
 
             Debug.Log("retract on");
             retract = true;
+        }
+    }
+
+    private void OnTriggerStay(Collider col)
+    {
+        //currentlyTouching = col.gameObject;
+    }
+
+    private void OnTriggerExit(Collider col)
+    {
+
+        if (col.tag == "Targetable")
+        {
+
+            currentlyTouching = null;
+
         }
     }
 }

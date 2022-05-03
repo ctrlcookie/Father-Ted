@@ -20,7 +20,11 @@ public class pickupdetect : MonoBehaviour
             on = false;
 
         }
-
+        if(col.name == GameObject.Find("Claw").GetComponent<Claw>().dropArea.name)
+        {
+            GameObject.Find("Claw").GetComponent<Claw>().Drop();
+        }
+            
     }
 
     private void OnTriggerExit(Collider col)
