@@ -9,6 +9,7 @@ public class Claw : MonoBehaviour
 
     List<Transform> AllTargets = new List<Transform>();
 
+    public SphereCollider radcol;
 
     public Transform clawRoot; //what's to be moved in order to move claw
     public Transform dropArea;
@@ -27,6 +28,7 @@ public class Claw : MonoBehaviour
     public bool drop = false;
     public bool dropping;
 
+    public int index;
 
     public float Timer = 0.0f;
     public float time = 5; //wait time
@@ -43,6 +45,8 @@ public class Claw : MonoBehaviour
         player = GameObject.Find("Player").transform;
         dropArea = GameObject.Find("Chute").transform;
         navAgent = clawRoot.GetComponent<NavMeshAgent>(); //where's the navmesh?
+
+        ChangeTarget();
 
         Chase();
     }
@@ -67,6 +71,11 @@ public class Claw : MonoBehaviour
         //retract = GameObject.Find("Pickuper").GetComponent<pickuper>().retrac; //check if player is crouching rn
 
         Timers();
+
+        if (8 > Vector3.Distance(dropArea.position, transform.position))
+        {
+            Drop();
+        }
 
         if (move)
         {
@@ -94,7 +103,7 @@ public class Claw : MonoBehaviour
 
     public void Chase()
     {
-        navAgent.SetDestination(player.position); //goto wp
+        navAgent.SetDestination(currentChaseTarget.position); //goto wp
         Debug.Log("CHASE");
     }
 
@@ -131,19 +140,26 @@ public class Claw : MonoBehaviour
 
         dropping = true;
 
+        //ChangeTarget();
+
         //player.parent = null;
         //player.GetComponent<Rigidbody>().isKinematic = false;
 
-        currentlyTouching.transform.parent = null;
-        currentlyTouching.GetComponent<Rigidbody>().isKinematic = false; //swap currentlytouching to a list and use foreach
+        if(currentlyTouching != null)
+        {
+            currentlyTouching.GetComponent<Rigidbody>().isKinematic = false; //swap currentlytouching to a list and use foreach?
+            currentlyTouching.GetComponent<Rigidbody>().useGravity = true;
 
-        //currentlyTouching.GetComponent<Rigidbody>().useGravity = true;
-        //currentlyTouching.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
+            currentlyTouching.transform.parent = null;
+
+            radcol.enabled = true;
+
+        }
     }
 
     public void ChangeTarget()
     {
-        int index;
+
         index = Random.Range(0, AllTargets.Count);
         currentChaseTarget = AllTargets[index];
         Debug.Log("Changing Target to " + AllTargets[index]);
@@ -164,7 +180,6 @@ public class Claw : MonoBehaviour
             if (dropping)
             {
                 dropping = false;
-                //foreach (SphereCollider bc in myColliders) bc.enabled = true;
 
             }
         }
@@ -176,16 +191,28 @@ public class Claw : MonoBehaviour
         if (col.tag == "Targetable" && grab && !dropping)
         {
             Debug.Log("Colliding with " + col.name);
-            col.transform.parent = this.transform;
-            col.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+            //col.transform.parent = this.transform;
+            //col.gameObject.GetComponent<Rigidbody>().isKinematic = true;
             //col.gameObject.GetComponent<Rigidbody>().useGravity = false;
 
-            currentlyTouching = col.gameObject;
+            //GameObject.Find("Pickuper").GetComponent<pickuper>().grab = false;
 
-            if()
+
+            currentlyTouching = col.gameObject;
+            currentlyTouching.transform.parent = this.transform;
+            currentlyTouching.gameObject.GetComponent<Rigidbody>().useGravity = false;
+
+
+            if (currentlyTouching.name == "AITeddy")
+            {
+                currentlyTouching.gameObject.GetComponent<WanderAi>().enabled = false;
+            }
 
             Debug.Log("retract on");
             retract = true;
+
+            radcol.enabled = false;
+
         }
     }
 
