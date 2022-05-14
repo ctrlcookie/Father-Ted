@@ -2,18 +2,26 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DoMission : MonoBehaviour
 {
-    public bool MD; //Mission Done
-    private void OnTriggerStay(Collider other)
+    public float MD;
+    public Slider slider;
+    public void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("MissionPoint"))
         {
             if (Input.GetKey(KeyCode.Mouse0))
             {
-                MD = true;
+                MD += 1;
+                other.gameObject.SetActive(false);
             }
         }
+    }
+
+     void Update()
+    {
+        slider.value = MD;
     }
 }
