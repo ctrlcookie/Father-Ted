@@ -118,10 +118,12 @@ public class FirstPersonAIO : MonoBehaviour {
     bool jumpInput;
     bool didJump;
     public bool useStamina = true;
+    public bool onLadder = false;
     public float staminaDepletionSpeed = 5f;
     public float staminaLevel = 50;
     public float speed;
     public float staminaInternal;
+    public float storedYVel;
     internal float walkSpeedInternal;
     internal float sprintSpeedInternal;
     internal float jumpPowerInternal;
@@ -373,11 +375,39 @@ public class FirstPersonAIO : MonoBehaviour {
             else if(Input.GetKeyDown(_crouchModifiers.crouchKey)){isCrouching = !isCrouching || _crouchModifiers.crouchOverride;}
             }
 
-        if(Input.GetButtonDown("Cancel")){ControllerPause();}
+    //    if(Input.GetButtonDown("Cancel")){ControllerPause();}
         #endregion
 
         #region Movement Settings - Update
-        
+
+        if (onLadder == true)
+        {
+            fps_Rigidbody.velocity = new Vector3(fps_Rigidbody.velocity.x, storedYVel, fps_Rigidbody.velocity.z);
+        }
+
+        if (onLadder == true)
+        {
+            if (Input.GetKey(KeyCode.Space)) {
+                storedYVel = 5;
+                playerCamera.fieldOfView = playerCamera.fieldOfView * 1.002f;
+            }
+
+            else {
+                storedYVel = -5;
+                playerCamera.fieldOfView = playerCamera.fieldOfView;
+            }
+        }
+
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            lockAndHideCursor = false;
+        }
+
+        else
+        {
+            lockAndHideCursor = true;
+        }
+
         #endregion
 
         #region Headbobbing Settings - Update
@@ -737,13 +767,13 @@ public class FirstPersonAIO : MonoBehaviour {
         enableCameraMovement = !enableCameraMovement;
     }
 
-    public void ControllerPause(){
-        controllerPauseState = !controllerPauseState;
-        if(lockAndHideCursor){
-            Cursor.lockState = controllerPauseState? CursorLockMode.None : CursorLockMode.Locked;
-            Cursor.visible = controllerPauseState;
-        }
-    }
+  //  public void ControllerPause(){
+ //       controllerPauseState = !controllerPauseState;
+  //      if(lockAndHideCursor){
+  //          Cursor.lockState = controllerPauseState? CursorLockMode.None : CursorLockMode.Locked;
+   //         Cursor.visible = controllerPauseState;
+   //     }
+  //  }
 
 
 
@@ -805,6 +835,22 @@ public class FirstPersonAIO : MonoBehaviour {
         IsGrounded = false;
         if(advanced.maxSlopeAngle>0){advanced.curntGroundNormal = Vector3.up; advanced.lastKnownSlopeAngle = 0; advanced.isTouchingWalkable = false; advanced.isTouchingUpright = false;}
 
+    }
+
+    void OnTriggerEnter(Collider coll)
+    {
+        if (coll.gameObject.tag == "Ladder")
+        {
+            onLadder = true;
+        }
+    }
+
+    void OnTriggerExit(Collider coll)
+    {
+        if (coll.gameObject.tag == "Ladder")
+        {
+            onLadder = false;
+        }
     }
 
 
