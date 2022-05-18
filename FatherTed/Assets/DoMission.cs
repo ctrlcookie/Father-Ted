@@ -42,6 +42,8 @@ public class DoMission : MonoBehaviour
 
     public void OnTriggerExit(Collider other)
     {
+        Debug.Log("TRIGGEREXITING" + other.name);
+
         if (other.CompareTag("MissionExit") && MD != 0)
         {
             StartCoroutine(WaitAndClose(1.0f));
