@@ -44,21 +44,12 @@ public class DoMission : MonoBehaviour
     {
         Debug.Log("TRIGGEREXITING" + other.name);
 
-        if (other.CompareTag("MissionExit") && MD != 0)
+        if (other.CompareTag("MissionExit"))//&& MD != 0
         {
-            StartCoroutine(WaitAndClose(1.0f));
+            missionEntry[MD - 1].GetComponent<Animator>().SetBool("missioncomplete", true);
             //add noise for it closing
             lightList[MD - 1].GetComponent<Light>().color = Color.green;
         }
     }
 
-    private IEnumerator WaitAndClose(float waitTime)
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(waitTime);
-            missionEntry[MD - 1].GetComponent<Animator>().SetBool("missioncomplete", true);
-
-        }
-    }
 }
