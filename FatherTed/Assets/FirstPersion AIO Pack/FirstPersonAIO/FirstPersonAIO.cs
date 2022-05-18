@@ -419,12 +419,12 @@ public class FirstPersonAIO : MonoBehaviour {
     private void FixedUpdate(){
 
         #region Look Settings - FixedUpdate
-
+        mouseSensitivity = PlayerPrefs.GetFloat("Sensitivity");
         #endregion
 
         #region Movement Settings - FixedUpdate
-        
-        if(useStamina){
+
+        if (useStamina){
             isSprinting = Input.GetKey(sprintKey) && !isCrouching && staminaInternal > 0 && (Mathf.Abs(fps_Rigidbody.velocity.x) > 0.01f || Mathf.Abs(fps_Rigidbody.velocity.z) > 0.01f);
             if(isSprinting){
                 staminaInternal -= (staminaDepletionSpeed*2)*Time.deltaTime;
