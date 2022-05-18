@@ -19,7 +19,7 @@ public class DoMission : MonoBehaviour
     {
         if (other.CompareTag("MissionPoint"))
         {
-            if (Input.GetKey(KeyCode.Mouse0))
+            if (Input.GetKey(KeyCode.Mouse0) || Input.GetKey(KeyCode.E))
             {
                 MD += 1;
                 other.gameObject.SetActive(false);
