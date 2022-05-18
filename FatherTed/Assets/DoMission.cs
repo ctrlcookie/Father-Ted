@@ -8,10 +8,12 @@ public class DoMission : MonoBehaviour
 {
     public int MD; //missions done
     public GameObject currentMission;
+    public GameObject currentLight;
+
     public Slider slider;
 
     public GameObject[] missionEntry;
-
+    public GameObject[] lightList;
 
     public void OnTriggerStay(Collider other)
     {
@@ -23,6 +25,7 @@ public class DoMission : MonoBehaviour
                 other.gameObject.SetActive(false);
             }
         }
+
     }
 
      void Update()
@@ -30,8 +33,10 @@ public class DoMission : MonoBehaviour
         slider.value = MD;
 
         currentMission = missionEntry[MD];
-        currentMission.GetComponent<Animator>().SetBool("shouldopen", true);
+        currentLight = lightList[MD];
 
+        currentMission.GetComponent<Animator>().SetBool("shouldopen", true);
+        currentLight.GetComponent<Light>().color = Color.cyan;
 
     }
 
@@ -39,6 +44,17 @@ public class DoMission : MonoBehaviour
     {
         if (other.CompareTag("MissionExit") && MD != 0)
         {
+            StartCoroutine(WaitAndClose(1.0f));
+            //add noise for it closing
+            lightList[MD - 1].GetComponent<Light>().color = Color.green;
+        }
+    }
+
+    private IEnumerator WaitAndClose(float waitTime)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(waitTime);
             missionEntry[MD - 1].GetComponent<Animator>().SetBool("missioncomplete", true);
 
         }
