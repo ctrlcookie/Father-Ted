@@ -33,6 +33,11 @@ public class WanderAi : MonoBehaviour
         
     }
 
+    internal void SetDestination(Vector3 newPos)
+    {
+        throw new System.NotImplementedException();
+    }
+
     IEnumerator Wander()
     {
         int rotTime = Random.Range(1, 3);
